@@ -27,7 +27,6 @@ public class DamageEventTransformer implements EventTransformer {
 
     @Override
     public CombatLogEntryEntity transformEvent(String logLine, LocalTime gameStartTime, MatchEntity matchEntity) {
-        log.info("Transforming damage event to CombatLogEntryEntity");
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 

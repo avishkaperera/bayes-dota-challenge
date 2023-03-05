@@ -25,7 +25,6 @@ public class PurchaseEventTransformer implements EventTransformer {
 
     @Override
     public CombatLogEntryEntity transformEvent(String logLine, LocalTime gameStartTime, MatchEntity matchEntity) {
-        log.info("Transforming purchase event to CombatLogEntryEntity");
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 

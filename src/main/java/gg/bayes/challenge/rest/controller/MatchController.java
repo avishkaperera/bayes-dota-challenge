@@ -4,9 +4,9 @@ import gg.bayes.challenge.rest.model.HeroDamage;
 import gg.bayes.challenge.rest.model.HeroItem;
 import gg.bayes.challenge.rest.model.HeroKills;
 import gg.bayes.challenge.rest.model.HeroSpells;
+import gg.bayes.challenge.service.CombatLogService;
 import gg.bayes.challenge.service.MatchService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +25,9 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private CombatLogService combatLogService;
 
     /**
      * Ingests a DOTA combat log file, parses and persists relevant events data. All events are associated with the same
@@ -52,7 +55,10 @@ public class MatchController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<HeroKills>> getMatch(@PathVariable("matchId") Long matchId) {
-        throw new NotImplementedException("TODO: implement");
+        log.info("Request received to get kill count of each hero in match [{}]", matchId);
+        List<HeroKills> heroKills = combatLogService.getHeroKillsForMatch(matchId);
+        log.info("Successfully queried for hero kills");
+        return new ResponseEntity<>(heroKills, HttpStatus.OK);
     }
 
     /**
@@ -69,8 +75,10 @@ public class MatchController {
     public ResponseEntity<List<HeroItem>> getHeroItems(
             @PathVariable("matchId") Long matchId,
             @PathVariable("heroName") String heroName) {
-
-        throw new NotImplementedException("TODO: implement");
+        log.info("Request received to get items bought by [{}] in match [{}]", heroName, matchId);
+        List<HeroItem> itemsBoughtByHero = combatLogService.getItemsBoughtByHero(matchId, heroName);
+        log.info("Successfully queried items bought by [{}] in match [{}]", heroName, matchId);
+        return new ResponseEntity<>(itemsBoughtByHero, HttpStatus.OK);
     }
 
     /**
@@ -87,8 +95,10 @@ public class MatchController {
     public ResponseEntity<List<HeroSpells>> getHeroSpells(
             @PathVariable("matchId") Long matchId,
             @PathVariable("heroName") String heroName) {
-
-        throw new NotImplementedException("TODO: implement");
+        log.info("Request received to get the spells cast by [{}] in match [{}]", heroName, matchId);
+        List<HeroSpells> heroSpells = combatLogService.getHeroSpellsForMatch(matchId, heroName);
+        log.info("Successfully queried the spells cast by [{}] in match [{}]", heroName, matchId);
+        return new ResponseEntity<>(heroSpells, HttpStatus.OK);
     }
 
     /**
@@ -105,7 +115,9 @@ public class MatchController {
     public ResponseEntity<List<HeroDamage>> getHeroDamages(
             @PathVariable("matchId") Long matchId,
             @PathVariable("heroName") String heroName) {
-
-        throw new NotImplementedException("TODO: implement");
+        log.info("Request received to get damage done by [{}] in match [{}]", heroName, matchId);
+        List<HeroDamage> heroDamages = combatLogService.getHeroDamageForMatch(matchId, heroName);
+        log.info("Successfully queried damage done by [{}] in match [{}]", heroName, matchId);
+        return new ResponseEntity<>(heroDamages, HttpStatus.OK);
     }
 }

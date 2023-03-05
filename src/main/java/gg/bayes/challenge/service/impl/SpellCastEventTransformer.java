@@ -28,7 +28,6 @@ public class SpellCastEventTransformer implements EventTransformer {
 
     @Override
     public CombatLogEntryEntity transformEvent(String logLine, LocalTime gameStartTime, MatchEntity matchEntity) {
-        log.info("Transforming spell cast event to CombatLogEntryEntity");
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 
