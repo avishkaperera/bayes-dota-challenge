@@ -10,7 +10,7 @@ public interface EventTransformer {
      *
      * @param logLine     Single log line
      * @param matchEntity Match entity
-     * @return CombatLogEntryEntity
+     * @return CombatLogEntryEntity if conditions applied meet or null
      */
     CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity);
 }

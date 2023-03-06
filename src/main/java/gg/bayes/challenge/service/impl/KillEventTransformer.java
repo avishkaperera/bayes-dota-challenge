@@ -24,20 +24,26 @@ public class KillEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
+        String actorFullString = words.get(ACTOR_INDEX);
+        String targetFullString = words.get(TARGET_INDEX);
 
-        String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
+        if (actorFullString.contains(ACTOR_REPLACE_PATTERN) && targetFullString.contains(TARGET_REPLACE_PATTERN)) {
+            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
-        combatLogEntryEntity.setType(CombatLogEntryEntity.Type.HERO_KILLED);
+            combatLogEntryEntity.setType(CombatLogEntryEntity.Type.HERO_KILLED);
 
-        String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setActor(actor);
+            String actor = actorFullString.replace(ACTOR_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setActor(actor);
 
-        String target = words.get(TARGET_INDEX).replace(TARGET_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTarget(target);
+            String target = targetFullString.replace(TARGET_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTarget(target);
 
-        combatLogEntryEntity.setMatch(matchEntity);
+            combatLogEntryEntity.setMatch(matchEntity);
 
-        return combatLogEntryEntity;
+            return combatLogEntryEntity;
+        }
+        // Returns null if it is not two heroes killing each other
+        return null;
     }
 }

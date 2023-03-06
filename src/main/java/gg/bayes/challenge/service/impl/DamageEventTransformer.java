@@ -26,23 +26,29 @@ public class DamageEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
+        String targetFullString = words.get(TARGET_INDEX);
 
-        String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
+        if (targetFullString.contains(TARGET_REPLACE_PATTERN)) {
+            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
-        combatLogEntryEntity.setType(CombatLogEntryEntity.Type.DAMAGE_DONE);
+            combatLogEntryEntity.setType(CombatLogEntryEntity.Type.DAMAGE_DONE);
 
-        String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setActor(actor);
+            String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setActor(actor);
 
-        String target = words.get(TARGET_INDEX).replace(TARGET_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTarget(target);
 
-        String damage = words.get(DAMAGE_INDEX);
-        combatLogEntryEntity.setDamage(Integer.valueOf(damage));
+            String target = targetFullString.replace(TARGET_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTarget(target);
 
-        combatLogEntryEntity.setMatch(matchEntity);
+            String damage = words.get(DAMAGE_INDEX);
+            combatLogEntryEntity.setDamage(Integer.valueOf(damage));
 
-        return combatLogEntryEntity;
+            combatLogEntryEntity.setMatch(matchEntity);
+
+            return combatLogEntryEntity;
+        }
+        // Returns null if the damage is not done to a hero
+        return null;
     }
 }
