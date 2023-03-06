@@ -14,7 +14,8 @@ import java.util.List;
 @Slf4j
 public class SpellCastEventTransformer implements EventTransformer {
     private static final int TIME_INDEX = 0;
-    private static final String TIME_REPLACE_PATTERN = "]";
+    private static final String TIME_REPLACE_PATTERN_1 = "[";
+    private static final String TIME_REPLACE_PATTERN_2 = "]";
     private static final int ACTOR_INDEX = 1;
     private static final String ACTOR_REPLACE_PATTERN = "npc_dota_hero_";
     private static final int SPELL_INDEX = 4;
@@ -28,7 +29,8 @@ public class SpellCastEventTransformer implements EventTransformer {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
         if (words.size() >= 9) {
-            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            String eventTime = words.get(TIME_INDEX)
+                    .replace(TIME_REPLACE_PATTERN_1, "").replace(TIME_REPLACE_PATTERN_2, "");
             combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
             combatLogEntryEntity.setType(CombatLogEntryEntity.Type.SPELL_CAST);

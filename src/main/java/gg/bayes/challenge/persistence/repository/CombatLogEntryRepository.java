@@ -22,7 +22,7 @@ public interface CombatLogEntryRepository extends JpaRepository<CombatLogEntryEn
      */
     @Query(value = "SELECT ACTOR AS HERO, COUNT(*) AS KILLS FROM DOTA_COMBAT_LOG WHERE MATCH_ID = :matchId AND ENTRY_TYPE = 'HERO_KILLED' GROUP BY ACTOR",
             nativeQuery = true)
-    List<HeroKillsDTO> getHeroKillsByMatchId(Long matchId);
+    List<HeroKillsDTO> findHeroKillsByMatchId(Long matchId);
 
     /**
      * Method to query hero items by match id and actor
@@ -33,7 +33,7 @@ public interface CombatLogEntryRepository extends JpaRepository<CombatLogEntryEn
      */
     @Query(value = "SELECT ITEM, ENTRY_TIMESTAMP AS TIMESTAMP FROM DOTA_COMBAT_LOG WHERE ACTOR = :actor AND MATCH_ID = :matchId AND ENTRY_TYPE = 'ITEM_PURCHASED'",
             nativeQuery = true)
-    List<HeroItemDTO> getHeroItemsByMatchIdAndActor(Long matchId, String actor);
+    List<HeroItemDTO> findHeroItemsByMatchIdAndActor(Long matchId, String actor);
 
     /**
      * Method to query hero spells by match id and actor
@@ -44,7 +44,7 @@ public interface CombatLogEntryRepository extends JpaRepository<CombatLogEntryEn
      */
     @Query(value = "SELECT ABILITY AS SPELL, COUNT(*) AS CASTS FROM DOTA_COMBAT_LOG WHERE ACTOR = :heroName AND MATCH_ID = :matchId AND ENTRY_TYPE = 'SPELL_CAST' GROUP BY ABILITY",
             nativeQuery = true)
-    List<HeroSpellsDTO> getHeroSpellsByMatchIdAndActor(Long matchId, String heroName);
+    List<HeroSpellsDTO> findHeroSpellsByMatchIdAndActor(Long matchId, String heroName);
 
     /**
      * Method to query hero damages by match id and actor
@@ -55,7 +55,7 @@ public interface CombatLogEntryRepository extends JpaRepository<CombatLogEntryEn
      */
     @Query(value = "SELECT TARGET, COUNT(*) AS DAMAGEINSTANCES, SUM(DAMAGE) AS TOTALDAMAGE FROM DOTA_COMBAT_LOG WHERE ACTOR = :heroName AND MATCH_ID = :matchId AND ENTRY_TYPE = 'DAMAGE_DONE' GROUP BY TARGET",
             nativeQuery = true)
-    List<HeroDamageDTO> getHeroDamageByMatchIdAndActor(Long matchId, String heroName);
+    List<HeroDamageDTO> findHeroDamageByMatchIdAndActor(Long matchId, String heroName);
 
     /**
      * Method to query a combat log entry by actor and event type

@@ -14,7 +14,8 @@ import java.util.List;
 @Slf4j
 public class DamageEventTransformer implements EventTransformer {
     private static final int TIME_INDEX = 0;
-    private static final String TIME_REPLACE_PATTERN = "]";
+    private static final String TIME_REPLACE_PATTERN_1 = "[";
+    private static final String TIME_REPLACE_PATTERN_2 = "]";
     private static final int ACTOR_INDEX = 1;
     private static final String ACTOR_REPLACE_PATTERN = "npc_dota_hero_";
     private static final int TARGET_INDEX = 3;
@@ -29,7 +30,8 @@ public class DamageEventTransformer implements EventTransformer {
         String targetFullString = words.size() >= 8 ? words.get(TARGET_INDEX) : "";
 
         if (targetFullString.contains(TARGET_REPLACE_PATTERN)) {
-            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            String eventTime = words.get(TIME_INDEX)
+                    .replace(TIME_REPLACE_PATTERN_1, "").replace(TIME_REPLACE_PATTERN_2, "");
             combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
             combatLogEntryEntity.setType(CombatLogEntryEntity.Type.DAMAGE_DONE);

@@ -41,7 +41,7 @@ public class CombatLogServiceImpl implements CombatLogService {
     @Override
     public HashSet<CombatLogEntryEntity> extractEvents(String combatLog, MatchEntity matchEntity) {
         log.info("Starting to extract events from combat log");
-        List<String> logLines = Arrays.asList(combatLog.split("\\["));
+        List<String> logLines = Arrays.asList(combatLog.split("\n"));
         return processLogLines(logLines, matchEntity);
     }
 
@@ -50,7 +50,7 @@ public class CombatLogServiceImpl implements CombatLogService {
         if (!matchRepository.existsById(matchId)) {
             throw new IllegalArgumentException(INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE);
         }
-        List<HeroKillsDTO> heroKills = combatLogEntryRepository.getHeroKillsByMatchId(matchId);
+        List<HeroKillsDTO> heroKills = combatLogEntryRepository.findHeroKillsByMatchId(matchId);
         return heroKills.stream().map(heroKill -> new HeroKills(heroKill.getHero(), heroKill.getKills()))
                 .collect(Collectors.toList());
     }
@@ -63,7 +63,7 @@ public class CombatLogServiceImpl implements CombatLogService {
         if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.ITEM_PURCHASED))) {
             throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
         }
-        List<HeroItemDTO> heroItems = combatLogEntryRepository.getHeroItemsByMatchIdAndActor(matchId, heroName);
+        List<HeroItemDTO> heroItems = combatLogEntryRepository.findHeroItemsByMatchIdAndActor(matchId, heroName);
         return heroItems.stream().map(heroItem -> new HeroItem(heroItem.getItem(), heroItem.getTimestamp()))
                 .collect(Collectors.toList());
     }
@@ -76,7 +76,7 @@ public class CombatLogServiceImpl implements CombatLogService {
         if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.SPELL_CAST))) {
             throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
         }
-        List<HeroSpellsDTO> heroSpells = combatLogEntryRepository.getHeroSpellsByMatchIdAndActor(matchId, heroName);
+        List<HeroSpellsDTO> heroSpells = combatLogEntryRepository.findHeroSpellsByMatchIdAndActor(matchId, heroName);
         return heroSpells.stream().map(heroSpell -> new HeroSpells(heroSpell.getSpell(), heroSpell.getCasts()))
                 .collect(Collectors.toList());
     }
@@ -89,7 +89,7 @@ public class CombatLogServiceImpl implements CombatLogService {
         if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.DAMAGE_DONE))) {
             throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
         }
-        List<HeroDamageDTO> heroDamages = combatLogEntryRepository.getHeroDamageByMatchIdAndActor(matchId, heroName);
+        List<HeroDamageDTO> heroDamages = combatLogEntryRepository.findHeroDamageByMatchIdAndActor(matchId, heroName);
         return heroDamages.stream().
                 map(heroDamage -> new HeroDamage(heroDamage.getTarget(), heroDamage.getDamageInstances(), heroDamage.getTotalDamage()))
                 .collect(Collectors.toList());

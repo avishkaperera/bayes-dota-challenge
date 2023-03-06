@@ -14,8 +14,7 @@ public class CommonUtil {
      * @return Time difference in milliseconds
      */
     public static long extractTimeDiffInMilliseconds(String sValue) {
-        String[] splitTime = sValue.split("]");
-        LocalTime eventTime = LocalTime.parse(splitTime[0], DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
+        LocalTime eventTime = LocalTime.parse(sValue, DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         return MILLIS.between(LocalTime.MIN, eventTime);
     }
 
