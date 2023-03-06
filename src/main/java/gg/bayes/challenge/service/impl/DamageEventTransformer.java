@@ -26,7 +26,7 @@ public class DamageEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
-        String targetFullString = words.size() >= 7 ? words.get(TARGET_INDEX) : "";
+        String targetFullString = words.size() >= 8 ? words.get(TARGET_INDEX) : "";
 
         if (targetFullString.contains(TARGET_REPLACE_PATTERN)) {
             String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");

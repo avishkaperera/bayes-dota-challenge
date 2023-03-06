@@ -25,7 +25,7 @@ public class PurchaseEventTransformer implements EventTransformer {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 
-        if (words.size() >= 4){
+        if (words.size() >= 5) {
             String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
             combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 

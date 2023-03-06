@@ -27,7 +27,7 @@ public class SpellCastEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
-        if (words.size() >= 8) {
+        if (words.size() >= 9) {
             String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
             combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
