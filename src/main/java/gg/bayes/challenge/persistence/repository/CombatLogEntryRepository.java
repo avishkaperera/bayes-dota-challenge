@@ -56,4 +56,13 @@ public interface CombatLogEntryRepository extends JpaRepository<CombatLogEntryEn
     @Query(value = "SELECT TARGET, COUNT(*) AS DAMAGEINSTANCES, SUM(DAMAGE) AS TOTALDAMAGE FROM DOTA_COMBAT_LOG WHERE ACTOR = :heroName AND MATCH_ID = :matchId AND ENTRY_TYPE = 'DAMAGE_DONE' GROUP BY TARGET",
             nativeQuery = true)
     List<HeroDamageDTO> getHeroDamageByMatchIdAndActor(Long matchId, String heroName);
+
+    /**
+     * Method to query a combat log entry by actor and event type
+     *
+     * @param actor Name of the hero
+     * @param type Event type
+     * @return CombatLogEntryEntity
+     */
+    CombatLogEntryEntity findFirstByActorAndType(String actor, CombatLogEntryEntity.Type type);
 }

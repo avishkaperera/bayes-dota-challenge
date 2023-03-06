@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/match")
 @Validated
-public class MatchController {
+public class MatchController extends ExceptionHandlerController {
 
     @Autowired
     private MatchService matchService;

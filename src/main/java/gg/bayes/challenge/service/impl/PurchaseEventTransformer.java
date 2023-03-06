@@ -25,19 +25,23 @@ public class PurchaseEventTransformer implements EventTransformer {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 
-        String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
+        if (words.size() >= 4){
+            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
-        combatLogEntryEntity.setType(CombatLogEntryEntity.Type.ITEM_PURCHASED);
+            combatLogEntryEntity.setType(CombatLogEntryEntity.Type.ITEM_PURCHASED);
 
-        String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setActor(actor);
+            String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setActor(actor);
 
-        String item = words.get(ITEM_INDEX).replace(ITEM_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setItem(item);
+            String item = words.get(ITEM_INDEX).replace(ITEM_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setItem(item);
 
-        combatLogEntryEntity.setMatch(matchEntity);
+            combatLogEntryEntity.setMatch(matchEntity);
 
-        return combatLogEntryEntity;
+            return combatLogEntryEntity;
+        }
+        // Returns null if proper log line is not found
+        return null;
     }
 }

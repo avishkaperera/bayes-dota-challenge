@@ -8,6 +8,7 @@ import gg.bayes.challenge.persistence.dto.HeroSpellsDTO;
 import gg.bayes.challenge.persistence.model.CombatLogEntryEntity;
 import gg.bayes.challenge.persistence.model.MatchEntity;
 import gg.bayes.challenge.persistence.repository.CombatLogEntryRepository;
+import gg.bayes.challenge.persistence.repository.MatchRepository;
 import gg.bayes.challenge.rest.model.HeroDamage;
 import gg.bayes.challenge.rest.model.HeroItem;
 import gg.bayes.challenge.rest.model.HeroKills;
@@ -25,11 +26,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CombatLogServiceImpl implements CombatLogService {
 
+    public static final String INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE = "Invalid match id provided";
+    public static final String INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE = "Invalid hero name provided";
+
     @Autowired
     private Map<String, EventTransformer> eventTransformers;
 
     @Autowired
     private CombatLogEntryRepository combatLogEntryRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Override
     public HashSet<CombatLogEntryEntity> extractEvents(String combatLog, MatchEntity matchEntity) {
@@ -40,6 +47,9 @@ public class CombatLogServiceImpl implements CombatLogService {
 
     @Override
     public List<HeroKills> getHeroKillsForMatch(Long matchId) {
+        if (!matchRepository.existsById(matchId)) {
+            throw new IllegalArgumentException(INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE);
+        }
         List<HeroKillsDTO> heroKills = combatLogEntryRepository.getHeroKillsByMatchId(matchId);
         return heroKills.stream().map(heroKill -> new HeroKills(heroKill.getHero(), heroKill.getKills()))
                 .collect(Collectors.toList());
@@ -47,6 +57,12 @@ public class CombatLogServiceImpl implements CombatLogService {
 
     @Override
     public List<HeroItem> getItemsBoughtByHero(Long matchId, String heroName) {
+        if (!matchRepository.existsById(matchId)) {
+            throw new IllegalArgumentException(INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE);
+        }
+        if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.ITEM_PURCHASED))) {
+            throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
+        }
         List<HeroItemDTO> heroItems = combatLogEntryRepository.getHeroItemsByMatchIdAndActor(matchId, heroName);
         return heroItems.stream().map(heroItem -> new HeroItem(heroItem.getItem(), heroItem.getTimestamp()))
                 .collect(Collectors.toList());
@@ -54,6 +70,12 @@ public class CombatLogServiceImpl implements CombatLogService {
 
     @Override
     public List<HeroSpells> getHeroSpellsForMatch(Long matchId, String heroName) {
+        if (!matchRepository.existsById(matchId)) {
+            throw new IllegalArgumentException(INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE);
+        }
+        if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.SPELL_CAST))) {
+            throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
+        }
         List<HeroSpellsDTO> heroSpells = combatLogEntryRepository.getHeroSpellsByMatchIdAndActor(matchId, heroName);
         return heroSpells.stream().map(heroSpell -> new HeroSpells(heroSpell.getSpell(), heroSpell.getCasts()))
                 .collect(Collectors.toList());
@@ -61,6 +83,12 @@ public class CombatLogServiceImpl implements CombatLogService {
 
     @Override
     public List<HeroDamage> getHeroDamageForMatch(Long matchId, String heroName) {
+        if (!matchRepository.existsById(matchId)) {
+            throw new IllegalArgumentException(INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE);
+        }
+        if (Objects.isNull(combatLogEntryRepository.findFirstByActorAndType(heroName, CombatLogEntryEntity.Type.DAMAGE_DONE))) {
+            throw new IllegalArgumentException(INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE);
+        }
         List<HeroDamageDTO> heroDamages = combatLogEntryRepository.getHeroDamageByMatchIdAndActor(matchId, heroName);
         return heroDamages.stream().
                 map(heroDamage -> new HeroDamage(heroDamage.getTarget(), heroDamage.getDamageInstances(), heroDamage.getTotalDamage()))
@@ -72,7 +100,10 @@ public class CombatLogServiceImpl implements CombatLogService {
         logLines.forEach(line -> {
             if (line.contains(Constants.EventMatchers.PURCHASE_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.PURCHASE_TRANSFORMER);
-                combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                CombatLogEntryEntity purchaseEventEntity = eventTransformer.transformEvent(line, matchEntity);
+                if (Objects.nonNull(purchaseEventEntity)) {
+                    combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                }
             } else if (line.contains(Constants.EventMatchers.KILL_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.KILL_TRANSFORMER);
                 CombatLogEntryEntity killEventEntry = eventTransformer.transformEvent(line, matchEntity);
@@ -81,7 +112,10 @@ public class CombatLogServiceImpl implements CombatLogService {
                 }
             } else if (line.contains(Constants.EventMatchers.SPELL_CAST_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.SPELL_CAST_TRANSFORMER);
-                combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                CombatLogEntryEntity spellCastEventEntity = eventTransformer.transformEvent(line, matchEntity);
+                if (Objects.nonNull(spellCastEventEntity)) {
+                    combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                }
             } else if (line.contains(Constants.EventMatchers.DAMAGE_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.DAMAGE_TRANSFORMER);
                 CombatLogEntryEntity damageEventEntry = eventTransformer.transformEvent(line, matchEntity);

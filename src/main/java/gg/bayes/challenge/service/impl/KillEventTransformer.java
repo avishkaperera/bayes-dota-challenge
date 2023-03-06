@@ -24,7 +24,7 @@ public class KillEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
-        String actorFullString = words.get(ACTOR_INDEX);
+        String actorFullString = words.size() >= 5 ? words.get(ACTOR_INDEX) : "";
         String targetFullString = words.get(TARGET_INDEX);
 
         if (actorFullString.contains(ACTOR_REPLACE_PATTERN) && targetFullString.contains(TARGET_REPLACE_PATTERN)) {

@@ -27,26 +27,29 @@ public class SpellCastEventTransformer implements EventTransformer {
     public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
+        if (words.size() >= 8) {
+            String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
-        String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
+            combatLogEntryEntity.setType(CombatLogEntryEntity.Type.SPELL_CAST);
 
-        combatLogEntryEntity.setType(CombatLogEntryEntity.Type.SPELL_CAST);
+            String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setActor(actor);
 
-        String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setActor(actor);
+            String spell = words.get(SPELL_INDEX);
+            combatLogEntryEntity.setAbility(spell);
 
-        String spell = words.get(SPELL_INDEX);
-        combatLogEntryEntity.setAbility(spell);
+            String spellLevel = words.get(SPELL_LEVEL_INDEX).replace(SPELL_LEVEL_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setAbilityLevel(Integer.valueOf(spellLevel));
 
-        String spellLevel = words.get(SPELL_LEVEL_INDEX).replace(SPELL_LEVEL_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setAbilityLevel(Integer.valueOf(spellLevel));
+            String target = words.get(TARGET_INDEX).replace(TARGET_REPLACE_PATTERN, "");
+            combatLogEntryEntity.setTarget(target);
 
-        String target = words.get(TARGET_INDEX).replace(TARGET_REPLACE_PATTERN, "");
-        combatLogEntryEntity.setTarget(target);
+            combatLogEntryEntity.setMatch(matchEntity);
 
-        combatLogEntryEntity.setMatch(matchEntity);
-
-        return combatLogEntryEntity;
+            return combatLogEntryEntity;
+        }
+        // Returns null if proper log line is not found
+        return null;
     }
 }
