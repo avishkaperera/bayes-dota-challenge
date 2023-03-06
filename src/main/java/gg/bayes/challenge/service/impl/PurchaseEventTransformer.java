@@ -7,11 +7,8 @@ import gg.bayes.challenge.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.time.temporal.ChronoUnit.MILLIS;
 
 @Service
 @Slf4j
@@ -24,13 +21,12 @@ public class PurchaseEventTransformer implements EventTransformer {
     private static final String ITEM_REPLACE_PATTERN = "item_";
 
     @Override
-    public CombatLogEntryEntity transformEvent(String logLine, LocalTime gameStartTime, MatchEntity matchEntity) {
+    public CombatLogEntryEntity transformEvent(String logLine, MatchEntity matchEntity) {
         CombatLogEntryEntity combatLogEntryEntity = new CombatLogEntryEntity();
         List<String> words = Arrays.asList(logLine.split(" "));
 
         String eventTime = words.get(TIME_INDEX).replace(TIME_REPLACE_PATTERN, "");
-        long purchasedTime = MILLIS.between(gameStartTime, CommonUtil.extractTimeInMilliseconds(eventTime));
-        combatLogEntryEntity.setTimestamp(purchasedTime);
+        combatLogEntryEntity.setTimestamp(CommonUtil.extractTimeDiffInMilliseconds(eventTime));
 
         combatLogEntryEntity.setType(CombatLogEntryEntity.Type.ITEM_PURCHASED);
 
