@@ -18,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,13 +75,19 @@ public class CombatLogServiceImpl implements CombatLogService {
                 combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
             } else if (line.contains(Constants.EventMatchers.KILL_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.KILL_TRANSFORMER);
-                combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                CombatLogEntryEntity killEventEntry = eventTransformer.transformEvent(line, matchEntity);
+                if (Objects.nonNull(killEventEntry)) {
+                    combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                }
             } else if (line.contains(Constants.EventMatchers.SPELL_CAST_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.SPELL_CAST_TRANSFORMER);
                 combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
             } else if (line.contains(Constants.EventMatchers.DAMAGE_EVENT)) {
                 EventTransformer eventTransformer = eventTransformers.get(Constants.EventTransformers.DAMAGE_TRANSFORMER);
-                combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                CombatLogEntryEntity damageEventEntry = eventTransformer.transformEvent(line, matchEntity);
+                if (Objects.nonNull(damageEventEntry)) {
+                    combatLogEntryEntities.add(eventTransformer.transformEvent(line, matchEntity));
+                }
             }
         });
         return combatLogEntryEntities;
