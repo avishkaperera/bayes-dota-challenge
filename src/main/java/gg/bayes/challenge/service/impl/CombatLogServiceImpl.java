@@ -37,7 +37,7 @@ public class CombatLogServiceImpl implements CombatLogService {
     @Override
     public HashSet<CombatLogEntryEntity> extractEvents(String combatLog, MatchEntity matchEntity) {
         log.info("Starting to extract events from combat log");
-        List<String> logLines = Arrays.asList(combatLog.split("\n"));
+        List<String> logLines = combatLog.lines().collect(Collectors.toList());
         return processLogLines(logLines, matchEntity);
     }
 
