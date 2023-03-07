@@ -15,8 +15,8 @@ import gg.bayes.challenge.rest.model.HeroKills;
 import gg.bayes.challenge.rest.model.HeroSpells;
 import gg.bayes.challenge.service.CombatLogService;
 import gg.bayes.challenge.service.EventTransformer;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,19 +24,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CombatLogServiceImpl implements CombatLogService {
 
     public static final String INVALID_MATCH_ID_PROVIDED_ERROR_MESSAGE = "Invalid match id provided";
     public static final String INVALID_HERO_NAME_PROVIDED_ERROR_MESSAGE = "Invalid hero name provided";
 
-    @Autowired
-    private Map<String, EventTransformer> eventTransformers;
-
-    @Autowired
-    private CombatLogEntryRepository combatLogEntryRepository;
-
-    @Autowired
-    private MatchRepository matchRepository;
+    private final Map<String, EventTransformer> eventTransformers;
+    private final CombatLogEntryRepository combatLogEntryRepository;
+    private final MatchRepository matchRepository;
 
     @Override
     public HashSet<CombatLogEntryEntity> extractEvents(String combatLog, MatchEntity matchEntity) {

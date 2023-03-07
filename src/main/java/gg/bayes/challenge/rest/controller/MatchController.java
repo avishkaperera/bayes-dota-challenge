@@ -6,8 +6,8 @@ import gg.bayes.challenge.rest.model.HeroKills;
 import gg.bayes.challenge.rest.model.HeroSpells;
 import gg.bayes.challenge.service.CombatLogService;
 import gg.bayes.challenge.service.MatchService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/match")
 @Validated
+@RequiredArgsConstructor
 public class MatchController extends ExceptionHandlerController {
 
-    @Autowired
-    private MatchService matchService;
-
-    @Autowired
-    private CombatLogService combatLogService;
+    private final MatchService matchService;
+    private final CombatLogService combatLogService;
 
     /**
      * Ingests a DOTA combat log file, parses and persists relevant events data. All events are associated with the same

@@ -20,7 +20,6 @@ public class DamageEventTransformer implements EventTransformer {
     private static final String ACTOR_REPLACE_PATTERN = "npc_dota_hero_";
     private static final int TARGET_INDEX = 3;
     private static final String TARGET_REPLACE_PATTERN = "npc_dota_hero_";
-
     private static final int DAMAGE_INDEX = 7;
 
     @Override
@@ -38,7 +37,6 @@ public class DamageEventTransformer implements EventTransformer {
 
             String actor = words.get(ACTOR_INDEX).replace(ACTOR_REPLACE_PATTERN, "");
             combatLogEntryEntity.setActor(actor);
-
 
             String target = targetFullString.replace(TARGET_REPLACE_PATTERN, "");
             combatLogEntryEntity.setTarget(target);
